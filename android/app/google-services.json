@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "685574440358",
+    "firebase_url": "https://complete-will-240606.firebaseio.com",
+    "project_id": "complete-will-240606",
+    "storage_bucket": "complete-will-240606.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685574440358:android:df0e6f2d32e4ba67",
+        "android_client_info": {
+          "package_name": "com.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwCmaVHrjzCX-629bFznh2CviFm3hQ5NA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685574440358:android:78011d3885c31408987b67",
+        "android_client_info": {
+          "package_name": "com.example.booking_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwCmaVHrjzCX-629bFznh2CviFm3hQ5NA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
