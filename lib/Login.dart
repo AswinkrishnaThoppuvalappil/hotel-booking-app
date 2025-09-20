@@ -2,6 +2,7 @@ import 'package:booking_app/BottomNavigationBar.dart';
 import 'package:booking_app/autoOtpverification.dart';
 import 'package:booking_app/create_account_page.dart';
 import 'package:booking_app/homePage1.dart';
+import 'package:booking_app/sign_up_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -413,8 +414,7 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            CreateAccountPage(),
+                                        builder: (context) => SignUpPage(),
                                       ),
                                     );
                                   },

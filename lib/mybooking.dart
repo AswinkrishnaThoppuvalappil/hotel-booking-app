@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -76,6 +78,7 @@ class _MybookingState extends State<Mybooking> {
   @override
   void initState() {
     // TODO: implement initState
+    _printBookingData();
     super.initState();
     getBookingData();
   }
@@ -88,7 +91,7 @@ class _MybookingState extends State<Mybooking> {
       var response = await fetchdata.get(
         "https://hotel.b4production.com/getandposthostel",
       );
-
+      inspect(response);
       if (response.statusCode == 200) {
         print("API raw response: ${response.data}");
         print("Response type: ${response.data.runtimeType}");
@@ -106,26 +109,15 @@ class _MybookingState extends State<Mybooking> {
           }
         });
 
-        print("Parsed jsonList length: ${jsonList.length}");
+        log("Parsed jsonList length: ${jsonList.toString()}");
       }
     } catch (e) {
       print("Error fetching data: $e");
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    DateTime checkinDate = widget.selectedCheckinDate is String
-        ? DateTime.parse(widget.selectedCheckinDate)
-        : widget.selectedCheckinDate;
-
-    String combinedCheckinFormat = DateFormat.yMEd().format(checkinDate);
-    DateTime checkOutDate = widget.selectedCheckoutDate is String
-        ? DateTime.parse(widget.selectedCheckoutDate)
-        : widget.selectedCheckoutDate;
-    String combinedcheckoutFormat = DateFormat.yMEd().format(checkOutDate);
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -135,12 +127,13 @@ class _MybookingState extends State<Mybooking> {
             child: Text("My Booking"),
           ),
           bottom: TabBar(
-            indicator: BoxDecoration(borderRadius: BorderRadius.circular(25)),
+            labelColor: Colors.black,
             indicatorColor: Colors.black,
-            indicatorSize: TabBarIndicatorSize.label,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicatorWeight: 3,
             tabs: [
               Tab(icon: AutoSizeText("Booked")),
-              Tab(icon: Text("history")),
+              Tab(icon: Text("History")),
             ],
           ),
         ),
@@ -149,174 +142,369 @@ class _MybookingState extends State<Mybooking> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width,
-                  child: Column(
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: ListTile(
-                      //     leading: Image.asset("assets/Hotel_image1.jpg"),
-                      //     title: Text(
-                      //       "Hotel Name  \n 399",
-                      //       style: TextStyle(
-                      //         color: Colors.black,
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //     ),
-                      //     subtitle: Text("🌟 4.5"),
-                      //   ),
-                      // ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: 1,
+                child: jsonList.isEmpty
+                    ? Center(child: CircularProgressIndicator())
+                    : Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        child: Column(
+                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: ListTile(
+                            //     leading: Image.asset("assets/Hotel_image1.jpg"),
+                            //     title: Text(
+                            //       "Hotel Name  \n 399",
+                            //       style: TextStyle(
+                            //         color: Colors.black,
+                            //         fontWeight: FontWeight.bold,
+                            //       ),
+                            //     ),
+                            //     subtitle: Text("🌟 4.5"),
+                            //   ),
+                            // ),
+                            Expanded(
+                              child: ListView.separated(
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(height: 20),
+                                itemCount: 1,
 
-                          itemBuilder: (BuildContext, int index) {
-                            return ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadiusGeometry.circular(15),
-                                child: Container(
-                                  width: 200,
-                                  height: 300,
-                                  child: Image.network("${widget.himage}"),
-                                ),
-                              ),
-                              title: Text(
-                                "${widget.hname} \n ${widget.hprice}",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              subtitle: Text("🌟 4.5"),
-                            );
-                          },
-                        ),
-                      ),
-                      ListTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "${[combinedCheckinFormat]}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                              ),
-                            ),
-                            SizedBox(width: 50),
-                            Icon(Icons.arrow_circle_right_rounded),
-                            SizedBox(width: 50),
-                            Text(
-                              "${combinedcheckoutFormat}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
+                                itemBuilder: (BuildContext, int index) {
+                                  final item =
+                                      jsonList[index] as Map<String, dynamic>;
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 0.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    padding: EdgeInsets.only(
+                                      left: 10,
+                                      top: 10,
+                                      bottom: 10,
+                                      right: 10,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 150,
+                                              height: 100,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Image.network(
+                                                  jsonList[index]['himage'],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+
+                                            const SizedBox(width: 20),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${jsonList[index]['hname']} ",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "Location: ${jsonList[index]['hloc']}",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "₹ ${jsonList[index]['hprice']}",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.star, size: 16),
+                                                    const SizedBox(width: 5),
+                                                    Text("4.5 (756)"),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+
+                                        const SizedBox(height: 10),
+
+                                        Container(
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: 0.5,
+                                            ),
+                                          ),
+
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Text("Check in"),
+
+                                                  Text(
+                                                    '12 June',
+
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              Container(
+                                                width: 30,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+
+                                                  border: Border.all(
+                                                    width: 0.5,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons.arrow_right_alt,
+                                                  ),
+                                                ),
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Text("Check out"),
+
+                                                  Text(
+                                                    '13 June',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
               ),
-              ListView.builder(
-                itemBuilder: (context, int index) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(15),
-                            child: Container(
-                              width: 200,
-                              height: 300,
-                              child: Image.network("${widget.himage}"),
-                            ),
-                          ),
-                          title: Text(
-                            "${widget.hname} \n ${widget.hprice}",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Row(
-                            children: [
-                              Icon(Icons.star),
-                              SizedBox(width: 20),
-                              Text("🌟 4.5"),
-                            ],
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "${combinedCheckinFormat}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
+              jsonList.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 20),
+                      itemBuilder: (context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 0.5,
                               ),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            SizedBox(width: 50),
-                            Icon(Icons.arrow_circle_right_rounded),
-                            SizedBox(width: 50),
-                            Text(
-                              "${combinedcheckoutFormat}",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            padding: EdgeInsets.only(
+                              left: 10,
+                              top: 10,
+                              bottom: 10,
+                              right: 10,
                             ),
-                          ],
-                        ),
-                      ),
-                      // Container(
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //     crossAxisAlignment: CrossAxisAlignment.center,
-                      //     children: [
-                      //       Text(
-                      //         "12 June",
-                      //         style: TextStyle(
-                      //           color: Colors.black,
-                      //           fontWeight: FontWeight.bold,
-                      //         ),
-                      //       ),
-                      //       Icon(Icons.arrow_circle_right_rounded),
-                      //       Text(
-                      //         "12 June",
-                      //         style: TextStyle(
-                      //           color: Colors.black,
-                      //           fontWeight: FontWeight.bold,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                    ],
-                  );
-                },
-                itemCount: 10,
-              ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 150,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          jsonList[index]['himage'],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+
+                                    const SizedBox(width: 20),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 120,
+                                          child: Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            "${jsonList[index]['hname']} ",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 120,
+                                          child: Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            "Location: ${jsonList[index]['hloc']}",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "₹ ${jsonList[index]['hprice']}",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, size: 16),
+                                            const SizedBox(width: 5),
+                                            Text("4.5 (756)"),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 0.5,
+                                    ),
+                                  ),
+
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text("Check in"),
+
+                                          Text(
+                                            '12 June',
+
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+
+                                          border: Border.all(
+                                            width: 0.5,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Icon(Icons.arrow_right_alt),
+                                        ),
+                                      ),
+                                      Column(
+                                        children: [
+                                          Text("Check out"),
+
+                                          Text(
+                                            '13 June',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      itemCount: jsonList.length,
+                    ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _printBookingData() {
+    print("===== Booking Details =====");
+    print("Hotel Name     : ${widget.hname ?? 'NA'}");
+    print("Description    : ${widget.hdesc ?? 'NA'}");
+    print("Price          : ${widget.hprice?.toString() ?? 'NA'}");
+    print("Location       : ${widget.hloc ?? 'NA'}");
+    print("Address        : ${widget.haddr ?? 'NA'}");
+    print("Image          : ${widget.himage ?? 'NA'}");
+    print("Check-in Date  : ${widget.selectedCheckinDate ?? 'NA'}");
+    print("Check-out Date : ${widget.selectedCheckoutDate ?? 'NA'}");
+    print("===========================");
   }
 }

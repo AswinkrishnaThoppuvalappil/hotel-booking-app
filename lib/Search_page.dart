@@ -512,6 +512,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:booking_app/Checkin_Checkout_AddRoom.dart';
 import 'package:dio/dio.dart';
@@ -559,6 +561,8 @@ class _SearchPageState extends State<SearchPage> {
           } else {
             jsonList = [];
           }
+          log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+          log("Parsed jsonList: $jsonList");
         });
 
         print("Parsed jsonList length: ${jsonList.length}");
@@ -720,126 +724,173 @@ class _SearchPageState extends State<SearchPage> {
           // 🔄 Loader or List
           Expanded(
             child: jsonList.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: Text("No hotels found"))
                 : ListView.builder(
-                    scrollDirection: Axis.vertical,
                     itemCount: jsonList.length,
                     itemBuilder: (context, index) {
                       final item = jsonList[index] as Map<String, dynamic>;
-
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(20.0),
                         child: Container(
-                          width: 200,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          //height: 80,
+                          width: 300,
+                          //color: Colors.red,
                           child: Column(
                             children: [
-                              // 🖼️ Hotel Image
-                              Expanded(
-                                flex: 2,
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
+                              SizedBox(height: 20),
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadiusGeometry.circular(
+                                      15.0,
+                                    ),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 180,
+                                      color: Colors.white,
                                       child: InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CheckinCheckoutAddroom(
-                                                    hname: item['hname'] ?? "",
-                                                    himage:
-                                                        item['himage'] ?? "",
-                                                    haddr: item['haddr'] ?? "",
-                                                    hdesc: item['hdesc'] ?? "",
-                                                    hloc: item['hloc'] ?? "",
-                                                    hprice:
-                                                        item['hprice'] ?? "0",
-                                                    Location: widget.location,
-                                                  ),
-                                            ),
-                                          );
-                                        },
+                                        onTap: () {},
                                         child: Image.network(
-                                          item['himage'] ?? "",
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  const Icon(Icons.image),
+                                          jsonList[index]['himage'],
+                                          fit: BoxFit.fill,
                                         ),
                                       ),
                                     ),
-                                    Positioned(
-                                      right: 5,
-                                      top: 5,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _favourite = !_favourite;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.favorite,
-                                          color: _favourite
-                                              ? Colors.red
-                                              : Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // 🏨 Hotel Info
-                              Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      Row(
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(18.0),
+
+                                        child: Container(
+                                          color: const Color.fromARGB(
+                                            206,
+                                            232,
+                                            28,
+                                            14,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "70% Off",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 120),
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(25),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              print("icon button ");
+                                              _favourite =
+                                                  !_favourite; // ✅ toggle true/false
+                                            });
+                                          },
+                                          icon: CircleAvatar(
+                                            minRadius: 8,
+                                            maxRadius: 15,
+                                            backgroundColor: Colors.white,
+                                            child: Icon(
+                                              Icons.favorite_outline_outlined,
+                                              color: _favourite
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Container(
+                                width: double.infinity,
+
+                                height: 100,
+                                //color: Colors.green,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Row(
                                         children: [
                                           Icon(Icons.star),
-                                          SizedBox(width: 20),
                                           Text(
                                             " 4.5",
                                             style: TextStyle(
                                               color: Colors.black,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                      Text(item['hname'] ?? "No name"),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.location_pin,
-                                            color: Colors.orange,
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              item['hloc'] ?? "",
-                                              overflow: TextOverflow.ellipsis,
+                                          SizedBox(width: 30),
+                                          Text(
+                                            "(999)",
+                                            style: TextStyle(
+                                              color: Colors.grey,
                                             ),
                                           ),
                                         ],
                                       ),
-                                      Text(
-                                        "₹${item['hprice'] ?? "0"}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        "${jsonList[index]['hname']}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 18,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.location_pin,
+                                            color: Colors.orange,
+                                          ),
+                                          Text(jsonList[index]['hloc']),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "₹${jsonList[index]['hprice'].toString()}",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Text("₹7500"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

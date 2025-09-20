@@ -62,9 +62,6 @@ class _ShowbookingState extends State<Showbooking> {
         : widget.selectedCheckoutDate;
     String combinedcheckoutFormat = DateFormat.yMEd().format(checkOutDate);
 
-    int selectedGuests = 1;
-    int selectedRoom = 1;
-
     return Scaffold(
       appBar: AppBar(
         title: IconButton(onPressed: () {}, icon: Text("Back")),
@@ -200,14 +197,14 @@ class _ShowbookingState extends State<Showbooking> {
                             children: [
                               SizedBox(width: 20),
                               AutoSizeText(
-                                "Guest| $selectedGuests",
+                                "Guest| ${widget.selectedGuests}",
                                 maxFontSize: 15,
                                 minFontSize: 10,
                                 style: TextStyle(color: Colors.white),
                               ),
                               SizedBox(width: 20),
                               AutoSizeText(
-                                "Rooms| $selectedRoom",
+                                "Rooms| ${widget.selectedRoom}",
                                 maxFontSize: 15,
                                 minFontSize: 10,
                                 style: TextStyle(color: Colors.white),
@@ -284,12 +281,18 @@ class _ShowbookingState extends State<Showbooking> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => DeatilsPage(
-                                hname: "",
-                                himage: "",
-                                haddr: "",
-                                hdesc: "",
-                                hloc: "",
-                                hprice: 1,
+                                hname: widget.hname,
+                                himage: widget.himage,
+                                haddr: widget.haddr,
+                                hdesc: widget.hdesc,
+                                hloc: widget.hloc,
+                                hprice: widget.hprice,
+                                checkIndate: widget.selectedCheckinDate
+                                    .toString(),
+                                checkOutDate: widget.selectedCheckoutDate
+                                    .toString(),
+                                guestCount: widget.selectedGuests.toString(),
+                                roomCount: widget.selectedRoom.toString(),
                               ),
                             ),
                           );
@@ -298,7 +301,7 @@ class _ShowbookingState extends State<Showbooking> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: Image.asset(
+                              child: Image.network(
                                 "${widget.himage}",
                                 fit: BoxFit.cover,
                                 height: 110,

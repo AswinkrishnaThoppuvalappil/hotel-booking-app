@@ -1,9 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:booking_app/BottomNavigationBar.dart';
+import 'package:booking_app/homePage1.dart';
+import 'package:booking_app/razor_pay_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class DeatilsPage extends StatefulWidget {
   String? hname;
@@ -12,8 +17,14 @@ class DeatilsPage extends StatefulWidget {
   String? hloc;
   String? haddr;
   String? himage;
+
+  String? checkIndate, checkOutDate, guestCount, roomCount;
   DeatilsPage({
     super.key,
+    required this.checkIndate,
+    required this.checkOutDate,
+    required this.guestCount,
+    required this.roomCount,
     required this.hname,
     required this.himage,
     required this.haddr,
@@ -28,8 +39,136 @@ class DeatilsPage extends StatefulWidget {
 
 class _DeatilsPageState extends State<DeatilsPage> {
   bool _favourite = true;
+
+  late Razorpay _razorpay;
+  String paymentStatus = "Not started";
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+
+    // Event listeners
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    setState(() {
+      paymentStatus = "Payment Successful! ID: ${response.paymentId}";
+    });
+
+    // Show success popup
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Payment Successful"),
+          content: Text("Your payment ID is ${response.paymentId}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => Bottomnavigationbar(User: ''),
+                  ),
+                );
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    setState(() {
+      paymentStatus =
+          "Payment Failed! Code: ${response.code}, Message: ${response.message}";
+    });
+
+    // Show failure popup
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Payment Failed"),
+          content: Text(
+            "Error Code: ${response.code}\nMessage: ${response.message}",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    setState(() {
+      paymentStatus = "External Wallet Selected: ${response.walletName}";
+    });
+
+    // Optional: Show external wallet info
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("External Wallet"),
+          content: Text("Wallet: ${response.walletName}"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void openCheckout() {
+    var options = {
+      'key': 'rzp_test_1DP5mmOlF5G5ag',
+      'amount': widget.hprice! * 100,
+      'name': 'Test User',
+      'description': 'Test Payment',
+      'retry': {'enabled': true, 'max_count': 1},
+      'prefill': {'contact': '9123456789', 'email': 'test@example.com'},
+      'external': {
+        'wallets': ['paytm'],
+      },
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      setState(() {
+        paymentStatus = "Error opening Razorpay: $e";
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear(); // Removes all listeners
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('The data ${widget.checkOutDate}');
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -309,7 +448,8 @@ class _DeatilsPageState extends State<DeatilsPage> {
                                   ),
                                 ),
                                 Text(
-                                  "08/09/2025",
+                                  formatDate(widget.checkIndate!),
+
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -341,7 +481,7 @@ class _DeatilsPageState extends State<DeatilsPage> {
                                   ),
                                 ),
                                 Text(
-                                  "08/09/2025",
+                                  formatDate(widget.checkOutDate!),
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -359,14 +499,14 @@ class _DeatilsPageState extends State<DeatilsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Rooms  :  1",
+                                "Rooms  :  ${widget.roomCount}    ",
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
-                                "Guests  :  1    ",
+                                "Guests  :  ${widget.guestCount}    ",
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -444,7 +584,9 @@ class _DeatilsPageState extends State<DeatilsPage> {
                                         backgroundColor: Colors.black,
                                         foregroundColor: Colors.white,
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        openCheckout();
+                                      },
                                       child: AutoSizeText(
                                         "Book Now and Pay",
                                         minFontSize: 10,
@@ -900,4 +1042,14 @@ class _DeatilsPageState extends State<DeatilsPage> {
       ),
     );
   }
+}
+
+String formatDate(String dateString) {
+  // Parse the input string to DateTime
+  DateTime dateTime = DateTime.parse(dateString);
+
+  // Format the DateTime to dd/MM/yyyy
+  String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
+
+  return formattedDate;
 }

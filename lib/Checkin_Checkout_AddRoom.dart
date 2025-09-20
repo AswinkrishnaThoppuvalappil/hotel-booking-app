@@ -82,7 +82,6 @@ class _CheckinCheckoutAddroomState extends State<CheckinCheckoutAddroom>
   int guests = 1;
   int rooms = 1;
   // Shared Data//
-  DateTime? _selectedDate;
 
   Future<void> _postBookingRequest() async {
     Dio postData = Dio();
@@ -233,7 +232,7 @@ class _CheckinCheckoutAddroomState extends State<CheckinCheckoutAddroom>
               child: Expanded(
                 child: TableCalendar(
                   focusedDay: DateTime.now() ?? (checkInDate ?? DateTime.now()),
-                  firstDay: DateTime.utc(2025, 08, 27),
+                  firstDay: DateTime.now(),
                   lastDay: DateTime.utc(2025, 10, 30),
                   selectedDayPredicate: (Day) => isSameDay(Day, checkInDate),
                   onDaySelected: (selectedDay, FocusedDay) {
@@ -283,7 +282,7 @@ class _CheckinCheckoutAddroomState extends State<CheckinCheckoutAddroom>
                   ),
                   Expanded(
                     child: TableCalendar(
-                      firstDay: DateTime.utc(2020, 1, 1),
+                      firstDay: DateTime.now(),
                       lastDay: DateTime.utc(2030, 12, 31),
                       focusedDay:
                           checkOutDate ?? (checkInDate ?? DateTime.now()),
