@@ -26,128 +26,136 @@ class _RewardpageState extends State<Rewardpage> {
           children: [
             Text("Invite And Earn", style: TextStyle(fontSize: 25)),
             //Container For TimeLine Srats //
-            Expanded(
-              child: Container(
-                height: 500,
-                color: Colors.orange,
-                child: ListView(
-                  children: [
-                    SizedBox(height: 30),
-                    Container(
-                      // width: MediaQuery.sizeOf(context).width * 0.8,
-                      height: MediaQuery.sizeOf(context).height * 0.2,
-                      child: TimelineTile(
-                        isFirst: false,
-                        alignment: TimelineAlign.manual,
-                        lineXY: 0.3,
-                        indicatorStyle: IndicatorStyle(
-                          width: 30,
-                          drawGap: true,
-                          color: Colors.white,
-                          iconStyle: IconStyle(
-                            iconData: Icons.share,
-                            color: Colors.white,
-                          ),
-                        ),
-                        beforeLineStyle: LineStyle(
-                          color: Colors.white,
-                          thickness: 3,
-                        ),
-                        endChild: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            "Step 1\n Reffer Your Booking.com app to your\n friend and they sign up",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
+            Container(
+              height: 500,
 
-                    Container(
-                      // width: MediaQuery.sizeOf(context).width * 0.8,
-                      height: MediaQuery.sizeOf(context).height * 0.2,
-                      child: TimelineTile(
-                        alignment: TimelineAlign.manual,
-                        lineXY: 0.3,
-                        indicatorStyle: IndicatorStyle(
-                          width: 30,
-                          color: Colors.white,
-                          iconStyle: IconStyle(
-                            iconData: Icons.person_add,
-                            color: Colors.white,
-                          ),
-                        ),
-                        beforeLineStyle: LineStyle(
-                          color: Colors.white,
-                          thickness: 3,
-                        ),
-                        endChild: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            "step 2\n when they checkout for  1st time",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      //width: MediaQuery.sizeOf(context).width * 0.8,
-                      height: MediaQuery.sizeOf(context).height * 0.2,
-                      child: TimelineTile(
-                        isLast: false,
-                        alignment: TimelineAlign.manual,
-                        lineXY: 0.3,
-                        indicatorStyle: IndicatorStyle(
-                          width: 30,
-                          color: Colors.white,
-                          iconStyle: IconStyle(
-                            iconData: Icons.card_giftcard,
-                            color: Colors.white,
-                          ),
-                        ),
-                        beforeLineStyle: LineStyle(
-                          color: Colors.white,
-                          thickness: 3,
-                        ),
-                        endChild: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            "You Get 400 Rupee Offer",
-                            style: TextStyle(color: Colors.white),
-                          ),
+              color: Color.fromRGBO(255, 153, 51, 1),
+              child: Column(
+                children: [
+                  roadMap(
+                    title: 'Step 1',
+                    description:
+                        'You refer Booking.com app to your friends and they sign up',
+                  ),
+
+                  roadMap(
+                    title: 'Step 2',
+                    description: 'When they check out for first time',
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 20),
+                            DashedLineConnector(
+                              color: Colors.white,
+                              gap: 5,
+                              dash: 5,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    Container(
-                      //width: MediaQuery.sizeOf(context).width * 0.8,
-                      height: MediaQuery.sizeOf(context).height * 0.2,
-                      child: TimelineTile(
-                        isLast: true,
-                        alignment: TimelineAlign.manual,
-                        lineXY: 0.3,
-                        indicatorStyle: IndicatorStyle(
-                          width: 30,
-                          color: Colors.white,
-                          iconStyle: IconStyle(
-                            iconData: Icons.card_giftcard,
-                            color: Colors.white,
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(width: 20),
+                          SizedBox(
+                            width: 70,
+                            child: DashedLineConnector(
+                              direction: Axis.horizontal,
+                              color: Colors.white,
+                              gap: 5,
+                              dash: 5,
+                            ),
                           ),
-                        ),
-                        beforeLineStyle: LineStyle(
-                          color: Colors.white,
-                          thickness: 3,
-                        ),
-                        endChild: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            "Your Friend Gets 400 Rupee Offer",
-                            style: TextStyle(color: Colors.white),
+                          const SizedBox(width: 10),
+                          Text.rich(
+                            TextSpan(
+                              text: 'You get ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '400 Rupees Offer',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 20),
+                            DashedLineConnector(
+                              color: Colors.white,
+                              gap: 5,
+                              dash: 5,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const SizedBox(width: 20),
+                          SizedBox(
+                            width: 70,
+                            child: DashedLineConnector(
+                              direction: Axis.horizontal,
+                              color: Colors.white,
+                              gap: 5,
+                              dash: 5,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text.rich(
+                            TextSpan(
+                              text: 'You friend gets \n',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '400 Rupees Offer',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
 
@@ -189,6 +197,60 @@ class _RewardpageState extends State<Rewardpage> {
           ],
         ),
       ),
+    );
+  }
+
+  Column roadMap({required String title, required String description}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 70,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(width: 20),
+              DashedLineConnector(color: Colors.white, gap: 5, dash: 5),
+            ],
+          ),
+        ),
+
+        Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(
+                  width: 240,
+                  child: Text(
+                    description,
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

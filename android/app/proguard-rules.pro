@@ -1,0 +1,3 @@
+-keep class com.razorpay.** { *; }
+-keep class proguard.annotation.** { *; }
+-dontwarn proguard.annotation.**
